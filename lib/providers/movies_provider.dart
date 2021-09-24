@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:peliculas2/models/models.dart';
@@ -10,6 +12,7 @@ class MoviesProvider extends ChangeNotifier {
 
   List<Movie> onDisplayMovies = [];
   List<Movie> popularMovies = [];
+  Map<int, List<Cast>> moviesCast = {};
   int _popularPage = 0;
 
   MoviesProvider() {
@@ -18,12 +21,14 @@ class MoviesProvider extends ChangeNotifier {
     this.getPopularMovies();
   }
 
-  Future<String> _getJsonData(String endpoint, [int page = 1]) async{
+  Future<String> _getJsonData(String endpoint, [int page = 1]) async {
     var url = Uri.https(_baseUrl, endpoint,
         {'api_key': _apiKey, 'language': _language, 'page': '$page'});
+    // print(url);
     final response = await http.get(url);
     return response.body;
   }
+
   getOnDisplayMovies() async {
     final jsonData = await this._getJsonData('3/movie/now_playing');
     final NowPlayingResponse nowPlayingResponse =
@@ -36,10 +41,18 @@ class MoviesProvider extends ChangeNotifier {
   getPopularMovies() async {
     _popularPage++;
     final jsonData = await this._getJsonData('3/movie/popular', _popularPage);
-    final PopularResponse popularResponse =
-        PopularResponse.fromJson(jsonData);
+    final PopularResponse popularResponse = PopularResponse.fromJson(jsonData);
     // print(nowPlayingResponse.results[0].title);
     popularMovies = [...popularMovies, ...popularResponse.results];
     notifyListeners();
+  }
+
+  Future<List<Cast>> getMovieCast(int movieId) async {
+    if (moviesCast.containsKey(movieId)) return moviesCast[movieId]!;
+    // print('pidiendo información al servidor');
+    final jsonData = await this._getJsonData('3/movie/$movieId/credits');
+    final creditsResponse = CreditsResponse.fromJson(jsonData);
+    moviesCast[movieId] = creditsResponse.cast;
+    return creditsResponse.cast;
   }
 }
