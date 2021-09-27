@@ -4,7 +4,7 @@ import 'package:peliculas2/models/movie.dart';
 
 class CardSwiper extends StatelessWidget {
   final List<Movie> movies;
-  const CardSwiper({Key? key, required List<Movie> this.movies})
+  const CardSwiper({Key? key, required this.movies})
       : super(key: key);
 
   @override
