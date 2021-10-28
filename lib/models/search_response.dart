@@ -8,14 +8,14 @@ import 'package:peliculas2/models/models.dart';
 
 class SearchResponse {
     SearchResponse({
-        required this.dates,
+        // required this.dates,
         required this.page,
         required this.results,
         required this.totalPages,
         required this.totalResults,
     });
 
-    Dates dates;
+    // Dates dates;
     int page;
     List<Movie> results;
     int totalPages;
@@ -26,7 +26,7 @@ class SearchResponse {
     // String toJson() => json.encode(toMap());
 
     factory SearchResponse.fromMap(Map<String, dynamic> json) => SearchResponse(
-        dates: Dates.fromMap(json["dates"]),
+        // dates: Dates.fromMap(json["dates"]),
         page: json["page"],
         results: List<Movie>.from(json["results"].map((x) => Movie.fromMap(x))),
         totalPages: json["total_pages"],
